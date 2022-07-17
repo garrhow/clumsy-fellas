@@ -1,0 +1,110 @@
+[gd_scene load_steps=11 format=2]
+
+[ext_resource path="res://scenes/controllers/player/player.gd" type="Script" id=1]
+[ext_resource path="res://scenes/controllers/player/camera.gd" type="Script" id=2]
+
+[sub_resource type="CapsuleMesh" id=1]
+radius = 0.5
+
+[sub_resource type="SpatialMaterial" id=3]
+uv1_triplanar = true
+
+[sub_resource type="CylinderMesh" id=7]
+top_radius = 0.3
+bottom_radius = 0.3
+height = 0.2
+
+[sub_resource type="SpatialMaterial" id=8]
+
+[sub_resource type="CapsuleMesh" id=4]
+radius = 0.1
+mid_height = 0.5
+
+[sub_resource type="CapsuleMesh" id=5]
+radius = 0.05
+mid_height = 0.1
+
+[sub_resource type="SpatialMaterial" id=6]
+albedo_color = Color( 0, 0, 0, 1 )
+
+[sub_resource type="CapsuleShape" id=2]
+radius = 0.5
+
+[node name="Player" type="KinematicBody"]
+script = ExtResource( 1 )
+camera = NodePath("Camera Pivots/Horizontal Pivot/Vertical Pivot/Camera")
+camera_direction = NodePath("Camera Pivots/Horizontal Pivot/Camera Direction")
+debug_gui = NodePath("Canvas/Debug")
+pivot = NodePath("Character Pivot")
+
+[node name="Character Pivot" type="Spatial" parent="."]
+
+[node name="Mesh" type="MeshInstance" parent="Character Pivot"]
+transform = Transform( 1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0 )
+mesh = SubResource( 1 )
+skeleton = NodePath("../..")
+material/0 = SubResource( 3 )
+
+[node name="Face" type="MeshInstance" parent="Character Pivot/Mesh"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.397097, -0.5 )
+mesh = SubResource( 7 )
+material/0 = SubResource( 8 )
+
+[node name="LeftArm" type="MeshInstance" parent="Character Pivot/Mesh"]
+transform = Transform( -0.866025, -1.09278e-07, -0.5, 5.38546e-08, -1, 1.25278e-07, -0.5, 8.15666e-08, 0.866025, -0.6, 0, 0 )
+mesh = SubResource( 4 )
+material/0 = null
+
+[node name="LeftEye" type="MeshInstance" parent="Character Pivot/Mesh"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.15, -0.5, -0.5 )
+mesh = SubResource( 5 )
+material/0 = SubResource( 6 )
+
+[node name="RightArm" type="MeshInstance" parent="Character Pivot/Mesh"]
+transform = Transform( 0.866025, 2.18557e-08, 0.5, -2.18557e-08, 1, -5.85622e-09, -0.5, -5.85622e-09, 0.866025, 0.6, 0, 0 )
+mesh = SubResource( 4 )
+material/0 = null
+
+[node name="RightEye" type="MeshInstance" parent="Character Pivot/Mesh"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.15, -0.5, -0.5 )
+mesh = SubResource( 5 )
+material/0 = SubResource( 6 )
+
+[node name="Camera Pivots" type="Spatial" parent="."]
+
+[node name="Horizontal Pivot" type="Spatial" parent="Camera Pivots"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0 )
+
+[node name="Vertical Pivot" type="Spatial" parent="Camera Pivots/Horizontal Pivot"]
+
+[node name="Camera" type="Camera" parent="Camera Pivots/Horizontal Pivot/Vertical Pivot"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 6 )
+current = true
+script = ExtResource( 2 )
+horizontal_pivot = NodePath("../..")
+vertical_pivot = NodePath("..")
+
+[node name="Camera Direction" type="Spatial" parent="Camera Pivots/Horizontal Pivot"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 5 )
+
+[node name="Collision" type="CollisionShape" parent="."]
+transform = Transform( 1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0 )
+shape = SubResource( 2 )
+
+[node name="Canvas" type="CanvasLayer" parent="."]
+
+[node name="Debug" type="VSplitContainer" parent="Canvas"]
+margin_right = 115.0
+margin_bottom = 40.0
+size_flags_vertical = 3
+
+[node name="Direction" type="Label" parent="Canvas/Debug"]
+margin_right = 115.0
+margin_bottom = 14.0
+text = "Direction: (0, 0, 0)"
+
+[node name="Velocity" type="Label" parent="Canvas/Debug"]
+margin_top = 26.0
+margin_right = 115.0
+margin_bottom = 40.0
+text = "Velocity: (0, 0, 0)"

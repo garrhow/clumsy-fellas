@@ -26,6 +26,10 @@ surfaces/0 = {
 
 [node name="Hexagon Tile" type="StaticBody"]
 script = ExtResource( 1 )
+collision_path = NodePath("Collision")
+mesh_path = NodePath("Mesh")
+timer_path = NodePath("Timer")
+tween_path = NodePath("Tween")
 
 [node name="Collision" type="CollisionShape" parent="."]
 shape = SubResource( 2 )
@@ -45,4 +49,5 @@ mesh = SubResource( 1 )
 skeleton = NodePath(".")
 material/0 = null
 
+[connection signal="body_entered" from="Area" to="." method="_on_Area_body_entered"]
 [connection signal="timeout" from="Timer" to="." method="_on_Timer_timeout"]

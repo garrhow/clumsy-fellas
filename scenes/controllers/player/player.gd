@@ -4,10 +4,16 @@ extends KinematicBody
 export var show_debug : bool = true
 
 # Node paths
-export var camera : NodePath
-export var camera_direction : NodePath
-export var debug_gui : NodePath
-export var pivot : NodePath
+export (NodePath) var animation_player_path
+export (NodePath) var animation_tree_path
+export (NodePath) var camera
+export (NodePath) var camera_direction
+export (NodePath) var debug_gui
+export (NodePath) var pivot
+
+# Nodes
+onready var animation_player = get_node(animation_player_path)
+onready var animation_tree = get_node(animation_tree_path)
 
 var character_rotation_direction : Vector3
 
@@ -34,6 +40,17 @@ func _process(_delta):
 func _physics_process(delta):
 	if Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED: process_input()
 	process_movement(delta)
+	process_animation()
+
+func process_animation():
+	animation_tree["parameters/jump_cycle/add_amount"] = 1 if !grounded else 0
+	animation_tree["parameters/run_cycle/blend_amount"] = movement.length()
+	#$"Animation Tree"
+	pass
+	#if grounded:
+		#animation_player.play("Idle")
+	#else:
+		#animation_player.play("Jump")
 
 func process_input():
 	movement_input.x = Input.get_axis("move_forward", "move_back")
@@ -79,8 +96,11 @@ func process_movement(delta : float):
 		pass # velocity += -global_transform.origin.direction_to(get_node(pivot).transform.origin) * speed
 	
 	if is_on_floor():
+		grounded = true
 		diving = false
 		jumping = false
+	else:
+		grounded = false
 	
 	velocity = move_and_slide(velocity, Vector3.UP, true)
 

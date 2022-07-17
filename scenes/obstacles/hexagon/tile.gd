@@ -1,27 +1,35 @@
 extends StaticBody
 
-export (bool) var enabled = true
+export (NodePath) var collision_path
+export (NodePath) var mesh_path
+export (NodePath) var timer_path
+export (NodePath) var tween_path
+
+onready var collision = get_node(collision_path)
+onready var mesh = get_node(mesh_path)
+onready var timer = get_node(timer_path)
+onready var tween = get_node(tween_path)
 
 var destroyed : bool = false
 var touched : bool = false
-
-func _physics_process(_delta):
-	if $Area.get_overlapping_bodies().size() > 1 and !destroyed and !touched and enabled:
-		$Timer.start()
-		play_animation()
-		touched = true
 
 func _on_Timer_timeout():
 	if !destroyed:
 		destroy_object()
 		destroyed = true
 
+func _on_Area_body_entered(body):
+	if body.name == "Player" and !destroyed and !touched:
+		timer.start()
+		play_animation()
+		touched = true
+
 func destroy_object():
-	$Collision.queue_free()
-	$Mesh.queue_free()
+	collision.queue_free()
+	mesh.queue_free()
 
 func play_animation():
-	$Tween.interpolate_property($Mesh, "scale",
-		$Mesh.scale, Vector3.ZERO, 1.5,
+	tween.interpolate_property(mesh, "scale",
+		mesh.scale, Vector3.ZERO, 1.5,
 		Tween.TRANS_BOUNCE)
-	$Tween.start()
+	tween.start()
